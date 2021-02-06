@@ -13,7 +13,7 @@ public class MemberPayload {
 	private String address;
 	private long contact;
 	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT+7")
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", timezone = "GMT+7")
 	private Date expires;
 
 	public String getFirstname() {

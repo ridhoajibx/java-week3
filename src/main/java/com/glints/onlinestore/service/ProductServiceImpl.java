@@ -42,12 +42,14 @@ public class ProductServiceImpl implements ProductService{
 
 	@Override
 	public Product update(Integer id, ProductPayload productPayload) {
+		Supplier supplier = supplierRepo.findById(productPayload.getSupplierId()).orElse(null);
 		Product product = productRepo.findById(id).orElse(null);
 		product.setProductName(productPayload.getProductName());
 		product.setPrice(productPayload.getPrice());
 		product.setQuantity(productPayload.getQuantity());
 		product.setProductStatus(productPayload.getProductStatus());
 		product.setUpdatedTime(new Date());
+		product.setSupplier(supplier);
 		product = productRepo.save(product);
 		return product;
 	}
