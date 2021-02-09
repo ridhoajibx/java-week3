@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.glints.onlinestore.exception.BadRequestException;
 import com.glints.onlinestore.model.Product;
 import com.glints.onlinestore.model.Supplier;
 import com.glints.onlinestore.payload.ProductPayload;
@@ -41,9 +42,9 @@ public class ProductServiceImpl implements ProductService{
 	}
 
 	@Override
-	public Product update(Integer id, ProductPayload productPayload) {
+	public Product update(Integer id, ProductPayload productPayload) throws BadRequestException {
 		Supplier supplier = supplierRepo.findById(productPayload.getSupplierId()).orElse(null);
-		Product product = productRepo.findById(id).orElse(null);
+		Product product = productRepo.findById(id).orElseThrow(() -> new BadRequestException("Product with id: " + id + " not found!"));
 		product.setProductName(productPayload.getProductName());
 		product.setPrice(productPayload.getPrice());
 		product.setQuantity(productPayload.getQuantity());

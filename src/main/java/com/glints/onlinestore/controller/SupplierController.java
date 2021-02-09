@@ -2,6 +2,8 @@ package com.glints.onlinestore.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.glints.onlinestore.exception.BadRequestException;
 import com.glints.onlinestore.model.Supplier;
 import com.glints.onlinestore.payload.SupplierPayload;
 import com.glints.onlinestore.service.SupplierService;
@@ -31,14 +34,19 @@ public class SupplierController {
 	}
 	
 	@PostMapping("/create-supplier")
-	public ResponseEntity<Supplier> create(@RequestBody SupplierPayload supplierPayload){
+	public ResponseEntity<Supplier> create(@Valid @RequestBody SupplierPayload supplierPayload){
 		Supplier supplier = supplierService.create(supplierPayload);
 		return new ResponseEntity<Supplier>(supplier, HttpStatus.OK);
 	}	
 	
 	@PostMapping("/update-supplier/{id}")
-	public ResponseEntity<Supplier> update(@PathVariable("id") Integer id, @RequestBody SupplierPayload supplierPayload){
-		Supplier supplier = supplierService.update(id, supplierPayload);
+	public ResponseEntity<Supplier> update(@PathVariable("id") Integer id, @Valid @RequestBody SupplierPayload supplierPayload) throws BadRequestException {
+		Supplier supplier;
+		try {			
+			supplier = supplierService.update(id, supplierPayload);
+		} catch (BadRequestException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		return new ResponseEntity<Supplier>(supplier, HttpStatus.OK);
 	}
 	

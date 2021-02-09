@@ -2,6 +2,8 @@ package com.glints.onlinestore.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.glints.onlinestore.exception.BadRequestException;
 import com.glints.onlinestore.model.Product;
 import com.glints.onlinestore.payload.ProductPayload;
 import com.glints.onlinestore.service.ProductService;
@@ -31,14 +34,19 @@ public class ProductController {
 	}
 	
 	@PostMapping("/create-product")
-	public ResponseEntity<Product> create(@RequestBody ProductPayload productPayload){
+	public ResponseEntity<Product> create(@Valid @RequestBody ProductPayload productPayload){
 		Product product = productService.create(productPayload);
 		return new ResponseEntity<Product>(product, HttpStatus.OK);
 	}
 	
 	@PostMapping("/update-product/{id}")
-	public ResponseEntity<Product> create(@PathVariable("id") Integer id, @RequestBody ProductPayload productPayload){
-		Product product = productService.update(id, productPayload);
+	public ResponseEntity<Product> create(@PathVariable("id") Integer id, @Valid @RequestBody ProductPayload productPayload) throws BadRequestException{
+		Product product;
+		try {			
+			product = productService.update(id, productPayload);
+		} catch (BadRequestException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		return new ResponseEntity<Product>(product, HttpStatus.OK);
 	}
 	

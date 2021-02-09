@@ -2,6 +2,8 @@ package com.glints.onlinestore.controller;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.glints.onlinestore.exception.BadRequestException;
 import com.glints.onlinestore.model.Member;
 import com.glints.onlinestore.payload.MemberPayload;
 import com.glints.onlinestore.service.MemberService;
@@ -31,14 +34,19 @@ public class MemberController {
 	}
 
 	@PostMapping("/create-member")
-	public ResponseEntity<Member> create(@RequestBody MemberPayload memberPayload){
+	public ResponseEntity<Member> create(@Valid @RequestBody MemberPayload memberPayload){
 		Member member = memberService.create(memberPayload);
 		return new ResponseEntity<Member>(member, HttpStatus.OK);
 	}	
 	
 	@PostMapping("/update-member/{id}")
-	public ResponseEntity<Member> update(@PathVariable("id") Integer id, @RequestBody MemberPayload memberPayload){
-		Member member = memberService.update(id, memberPayload);
+	public ResponseEntity<Member> update(@PathVariable("id") Integer id, @Valid @RequestBody MemberPayload memberPayload) throws BadRequestException{
+		Member member;
+		try {
+			member = memberService.update(id, memberPayload);		
+		} catch (BadRequestException e) {
+			throw new BadRequestException(e.getMessage());
+		}
 		return new ResponseEntity<Member>(member, HttpStatus.OK);
 	}
 	

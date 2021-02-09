@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.glints.onlinestore.exception.BadRequestException;
 import com.glints.onlinestore.model.Member;
 import com.glints.onlinestore.model.Product;
 import com.glints.onlinestore.model.Sale;
@@ -44,8 +45,8 @@ public class SaleServiceImpl implements SaleService {
 	}
 
 	@Override
-	public Sale update(Integer id, SalePayload salePayload) {
-		Sale sale = saleRepo.findById(id).orElse(null);
+	public Sale update(Integer id, SalePayload salePayload) throws BadRequestException {
+		Sale sale = saleRepo.findById(id).orElseThrow(() -> new BadRequestException("Sale with id: " + id + " not found!"));
 		Member member = memberRepo.findById(salePayload.getMemberId()).orElse(null);
 		
 		Product product = sale.getProduct();

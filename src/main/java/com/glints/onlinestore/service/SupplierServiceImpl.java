@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.glints.onlinestore.exception.BadRequestException;
 import com.glints.onlinestore.model.Supplier;
 import com.glints.onlinestore.payload.SupplierPayload;
 import com.glints.onlinestore.repository.SupplierRepo;
@@ -23,7 +24,7 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	@Override
-	public Supplier create(SupplierPayload supplierPayload) {
+	public Supplier create(SupplierPayload supplierPayload){
 		Supplier supplier = new Supplier(supplierPayload.getName(),
 								supplierPayload.getAddress(),
 								supplierPayload.getContact()
@@ -33,8 +34,8 @@ public class SupplierServiceImpl implements SupplierService {
 	}
 
 	@Override
-	public Supplier update(Integer id, SupplierPayload supplierPayload) {
-		Supplier supplier = supplierRepo.findById(id).orElse(null);
+	public Supplier update(Integer id, SupplierPayload supplierPayload) throws BadRequestException  {
+		Supplier supplier = supplierRepo.findById(id).orElseThrow(() -> new BadRequestException("Supplier with id " + id + " not found!"));
 		supplier.setName(supplierPayload.getName());
 		supplier.setAddress(supplierPayload.getAddress());
 		supplier.setContact(supplierPayload.getContact());

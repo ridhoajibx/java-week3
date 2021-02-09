@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.glints.onlinestore.exception.BadRequestException;
 import com.glints.onlinestore.model.Member;
 import com.glints.onlinestore.payload.MemberPayload;
 import com.glints.onlinestore.repository.MemberRepo;
@@ -23,8 +24,9 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Member create(MemberPayload memberPayload) {
-		Member member = new Member(memberPayload.getFirstname(), 
+	public Member create(MemberPayload memberPayload){
+		Member member = new Member(
+				memberPayload.getFirstname(), 
 				memberPayload.getSurname(),
 				memberPayload.getAddress(),
 				memberPayload.getContact(),
@@ -35,8 +37,8 @@ public class MemberServiceImpl implements MemberService {
 	}
 
 	@Override
-	public Member update(Integer id, MemberPayload memberPayload) {
-		Member member = memberRepo.findById(id).orElse(null);
+	public Member update(Integer id, MemberPayload memberPayload) throws BadRequestException {
+		Member member = memberRepo.findById(id).orElseThrow(()-> new BadRequestException("Book Category with id " + id + " not found!"));
 		member.setFirstname(memberPayload.getFirstname());
 		member.setSurname(memberPayload.getSurname());
 		member.setAddress(memberPayload.getAddress());
