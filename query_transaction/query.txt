@@ -1,0 +1,4 @@
+select * from "transaction" t2 where price = (select max(price) from "transaction" t3);
+select customer_name, sum(price) as total from "transaction" t1 group by customer_name order by total desc;
+select product, count(*) as sales from "transaction" t1 group by product order by sales desc limit 1;
+select product, sum(price) as total from "transaction" t1 group by product order by total desc limit 1;
